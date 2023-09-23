@@ -15,5 +15,3 @@ jobs:
     - uses: actions/checkout@v3
     - name: make makeGithub
       run: make makeGithub
-    - name: make clean
-      run: make clean
