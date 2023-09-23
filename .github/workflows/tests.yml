@@ -1,17 +1,34 @@
-name: Tests
+name: Run Tests
 
 on:
   push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+    branches:
+      - main
 
 jobs:
-  build:
-
+  test:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
-    - name: make makeGithub
-      run: make makeGithub
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+
+    - name: Set up C++ Build Environment
+      run: sudo apt-get install build-essential
+
+    - name: Set up Google Test
+      run: |
+        git clone https://github.com/google/googletest.git
+        cd googletest
+        cmake .
+        make
+        sudo make install
+        cd ..
+
+    - name: Build and Run Tests
+      run: |
+        mkdir build
+        cd build
+        cmake ..
+        make
+        ./runTests
