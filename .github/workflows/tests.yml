@@ -13,7 +13,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - name: make
-      run: make
+    - name: makeGithub
+      run: makeGithub
     - name: make clean
       run: make clean
