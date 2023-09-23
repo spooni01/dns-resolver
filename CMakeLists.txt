@@ -10,7 +10,7 @@ add_subdirectory(googletest)
 add_executable(MyExecutable src/main.c)
 
 # Link against Google Test
-target_link_libraries(MyExecutable gtest_main)
+target_link_libraries(MyExecutable gtest_main stdc++fs)
 
 # Add the 'tests' subdirectory to your project
 add_subdirectory(tests)
