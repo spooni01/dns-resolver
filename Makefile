@@ -13,5 +13,9 @@ CFLAGS=-std=c99 -Wall -Wextra -pedantic
 all: src/main.c
 	$(CC) $(CFLAGS) -o $(OUTPUT_NAME) src/main.c
 
+makeGithub:
+	$(CC) $(CFLAGS) -D_POSIX_C_SOURCE=200809L -o $(OUTPUT_NAME) src/main.c
+
+
 clean:
 	del $(OUTPUT_NAME).exe
