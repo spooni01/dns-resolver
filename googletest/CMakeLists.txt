@@ -1,16 +1,27 @@
-cmake_minimum_required(VERSION 3.10)
+# Note: CMake support is community-based. The maintainers do not use CMake
+# internally.
 
-# Set the project name
-project(MyProject)
+cmake_minimum_required(VERSION 3.13)
 
-# Add the 'googletest' subdirectory to your project
-add_subdirectory(googletest)
+project(googletest-distribution)
+set(GOOGLETEST_VERSION 1.14.0)
 
-# Add your own source files here
-add_executable(MyExecutable src/main.c)
+if(NOT CYGWIN AND NOT MSYS AND NOT ${CMAKE_SYSTEM_NAME} STREQUAL QNX)
+  set(CMAKE_CXX_EXTENSIONS OFF)
+endif()
 
-# Link against Google Test
-target_link_libraries(MyExecutable gtest gtest_main)
+enable_testing()
 
-# Add the 'tests' subdirectory to your project
-add_subdirectory(tests)
+include(CMakeDependentOption)
+include(GNUInstallDirs)
+
+#Note that googlemock target already builds googletest
+option(BUILD_GMOCK "Builds the googlemock subproject" ON)
+option(INSTALL_GTEST "Enable installation of googletest. (Projects embedding googletest may want to turn this OFF.)" ON)
+option(GTEST_HAS_ABSL "Use Abseil and RE2. Requires Abseil and RE2 to be separately added to the build." OFF)
+
+if(BUILD_GMOCK)
+  add_subdirectory( googlemock )
+else()
+  add_subdirectory( googletest )
+endif()
