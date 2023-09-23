@@ -9,5 +9,8 @@
 *.o
 *.obj
 
+# Todo file
+todo.txt
+
 # Folders
 .vscode/

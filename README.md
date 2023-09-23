@@ -2,7 +2,7 @@
 
 ### Starting the program
 ```
-dns [-r] [-x] [-6] -s server [-p port] adress
+dns [-r] [-x] [-6] -s server [-p port] address
 ```
 
 ### Author
