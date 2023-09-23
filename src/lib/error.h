@@ -1,16 +1,16 @@
 /************************************************************
 * Project:     	DNS resolver								*
-* File:        	main.c  									*
+* File:        	errors.h  									*
 * Date:        	23.09.2023									*
 * Author: 		Adam Ližičiar <xlizic00@stud.fit.vutbr.cz>	*
 *************************************************************/
 
 #include <stdio.h>
-#include <stdlib.h>
-#include "error.c"
 
-int main() {
-    printf("Hello world\n");
+typedef enum
+{
+    SUCCESS                             = 0,  // No error
 
-    return 0;
-}
+    // Other
+    ERR_UNDEFINED                       = 100 // Undefined error
+} errors_t;
