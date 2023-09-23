@@ -8,7 +8,7 @@ OUTPUT_NAME=dns
 CC=gcc
 CFLAGS=-std=c99 -Wall -Wextra -pedantic
 
-.PHONY: all clean
+.PHONY: all makeGithub clean
 
 all: src/main.c
 	$(CC) $(CFLAGS) -o $(OUTPUT_NAME) src/main.c
