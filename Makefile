@@ -16,6 +16,5 @@ all: src/main.c
 makeGithub: src/main.c
 	$(CC) $(CFLAGS) -D_POSIX_C_SOURCE=200809L -o $(OUTPUT_NAME) src/main.c
 
-
 clean:
 	del $(OUTPUT_NAME).exe
