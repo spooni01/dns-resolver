@@ -13,4 +13,4 @@ add_executable(MyExecutable src/main.c)
 target_link_libraries(MyExecutable gtest gtest_main)
 
 # Add the 'tests' subdirectory to your project
-add_subdirectory(../tests)
+add_subdirectory(tests)
