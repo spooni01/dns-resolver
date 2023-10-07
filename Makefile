@@ -7,7 +7,7 @@
 OUTPUT_NAME = dns
 SRC_FILES = src/main.cpp
 CXX = g++
-CXX_FLAGS = -std=c++20 -Wall -Wextra -pedantic
+CXX_FLAGS = -std=c++20 -Wall -Wextra -pedantic -static-libstdc++
 
 all: $(OUTPUT_NAME)
 
