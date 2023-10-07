@@ -1,20 +1,18 @@
 #############################################################
 # Project:     	DNS resolver								#
 # File:        	Makefile									#
-# Date:        	23.9.2023									#
+# Date:        	7.10.2023									#
 # Author: 		Adam Ližičiar <xlizic00@stud.fit.vutbr.cz>	#
 #############################################################	
-OUTPUT_NAME=dns
-CC=gcc
-CFLAGS=-std=c99 -Wall -Wextra -pedantic
+OUTPUT_NAME = dns
+SRC_FILES = src/main.cpp
+CXX = g++
+CXX_FLAGS = -std=c++20 -Wall -Wextra -pedantic
 
-.PHONY: all makeGithub clean
+all: $(OUTPUT_NAME)
 
-all: src/main.c
-	$(CC) $(CFLAGS) -o $(OUTPUT_NAME) src/main.c
-
-makeGithub: src/main.c
-	$(CC) $(CFLAGS) -D_POSIX_C_SOURCE=200809L -o $(OUTPUT_NAME) src/main.c
+$(OUTPUT_NAME): $(SRC_FILES)
+	$(CXX) $(CXX_FLAGS) $(SRC_FILES) -o $(OUTPUT_NAME)
 
 clean:
-	del $(OUTPUT_NAME).exe
+	rm -f $(OUTPUT_NAME)
