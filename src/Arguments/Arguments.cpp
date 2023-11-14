@@ -1,31 +1,35 @@
-#define ANSI_RESET "\033[0m"
-#define ANSI_BOLD "\033[1m"
-#define ANSI_BLUE "\033[34m"
+/************************************************************
+* Project:     	DNS resolver								*
+* File:        	Arguments.cpp								*
+* Date:        	11.10.2023									*
+* Author: 		Adam Ližičiar <xlizic00@stud.fit.vutbr.cz>	*
+*************************************************************/	
 
+// Class to parse arguments and show help message
 class Arguments {
-public:
-    bool r;                 // Recursive desired
-    bool x;                 // Reverse query
-    bool _6;                // Query type AAAA instead of default A
-    std::string s;         // IP/domain address
-    std::string p;         // Port
-    std::string address;   // Queried address
+    public:
+        bool recursionDesired;  // Recursive desired
+        bool reverseQuery;      // Reverse query
+        bool ipv6;              // Query type AAAA instead of default A
+        std::string dnsServer;  // IP/domain address
+        std::string port;       // Port
+        std::string target;     // Queried address
+        static Arguments* parse_arguments(int argc, char **argv);
 
     // Constructor
     Arguments() {
-        this->r = false;
-        this->x = false;
-        this->_6 = false;
-        this->s = "";
-        this->p = "53"; 
-        this->address = "";
+        this->recursionDesired  = false;
+        this->reverseQuery      = false;
+        this->ipv6              = false;
+        this->dnsServer         = "";
+        this->port              = "53"; 
+        this->target            = "";
     }
 
-    // Prints help in terminal
-    void help() {
+    // Prints help in stdout
+    void print_help() {
         std::cout << ANSI_BOLD << ANSI_BLUE;
         std::cout << "DNS Resolver\n";
-        std::cout << ANSI_RESET << ANSI_BLUE;
         std::cout << "Usage: ./dns [-r] [-x] [-6] -s server [-p port] address\n";
         std::cout << "-r: Recursion desired (Recursion Desired = 1), otherwise no recursion.\n";
         std::cout << "-x: Reverse query instead of direct query.\n";
@@ -36,44 +40,50 @@ public:
         std::cout << ANSI_RESET;
         exit(0);
     }
+};
 
-    // Parsing arguments
-    void parse(int argc, char *argv[]) {   
-        bool serverController = false;
+// Function will parse arguments from STDIN into `Arguments*` structure
+Arguments* Arguments::parse_arguments(int argc, char **argv) {
+    Arguments *arguments = new Arguments();
+    bool wasServer = false;
+    char option;
 
-        char opt;
-        while((opt = getopt(argc, argv, "r::x::6::s:p:h::")) != -1) {
-            switch(opt) {
-                case 'r':
-                    this->r = true;
-                    break;
-                case 'x':
-                    this->x = true;
-                    break;
-                case '6':
-                    this->_6 = true;
-                    break;
-                case 's':
-                    this->s = optarg;
-                    serverController = true;
-                    break;
-                case 'p':
-                    this->p = optarg;
-                    break;
-                case 'h':
-                    this->help();
-                    break;
-                case '?':
-                    Error error("Wrong argument");
-            }
+    // Save options to variables
+    while((option = getopt(argc, argv, "r::x::6::s:p:h::")) != -1) {
+        switch(option) {
+            case 'r':
+                arguments->recursionDesired = true;
+                break;
+            case 'x':
+                arguments->reverseQuery = true;
+                break;
+            case '6':
+                arguments->ipv6 = true;
+                break;
+            case 's':
+                arguments->dnsServer = optarg;
+                wasServer = true;
+                break;
+            case 'p':
+                arguments->port = optarg;
+                break;
+            case 'h':
+                arguments->print_help();
+                break;
+            case '?':
+                Error("Invalid argument given");
         }
-
-        if ((optind + 1) != argc) 
-            Error error("Wrong number of arguments");
-        if (!serverController) 
-            Error error("Server argument was not given");
-
-        this->address = argv[optind];
     }
 
-};
+    // Check for additional arguments
+    if ((optind + 1) != argc) {
+        Error("Error, unusual parameters given");
+    }
+    // Check if server is missing
+    else if (!wasServer) {
+        Error("Missing -s argument");
+    }
+
+    arguments->target = argv[optind];
+    return arguments;
+}

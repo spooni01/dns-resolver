@@ -1,0 +1,8 @@
+Authoritative: No, Recursive: Yes, Truncated: No
+Question section (1)
+  www.github.com., A, IN
+Answer section (2)
+  www.github.com., CNAME, IN, 3600, github.com.
+  github.com., A, IN, 60, 140.82.121.3
+Authority section (0)
+Additional section (0)

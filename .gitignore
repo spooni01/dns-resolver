@@ -14,4 +14,34 @@ todo.txt
 
 # Folders
 .vscode/
-src_old/
+
+# LaTex
+doc/*.aux
+doc/*.fls
+doc/*.log
+doc/*.fdb_latexmk
+doc/*.synctex.gz
+doc/*.dvi
+doc/*.ps
+doc/*-eps-converted-to*
+doc/*.blg
+doc/*.bbl
+doc/*.out
+doc/*.toc
+doc/*.pdf.filepart
+doc/*.synctex(busy)
+obj/*.aux
+obj/*.fls
+obj/*.log
+obj/*.fdb_latexmk
+obj/*.synctex.gz
+obj/*.dvi
+obj/*.ps
+obj/*-eps-converted-to*
+obj/*.blg
+obj/*.bbl
+obj/*.out
+obj/*.toc
+obj/*.pdf.filepart
+obj/*.synctex(busy)
+

@@ -1,18 +1,25 @@
-#include <iostream>
-#include <getopt.h>
-#include "Error/Error.cpp"
-#include "Arguments/Arguments.cpp"
+/************************************************************
+* Project:     	DNS resolver								*
+* File:        	main.cpp	    							*
+* Date:        	11.10.2023									*
+* Author: 		Adam Ližičiar <xlizic00@stud.fit.vutbr.cz>	*
+*************************************************************/
+#include "main.hpp"
 
+/*
+ *  Main function
+ */
 int main(int argc, char *argv[]) {
-    Arguments arg;
-    arg.parse(argc, argv);
+    DnsRequestSender *request = new DnsRequestSender;
+    DnsResponseReceiver *response = new DnsResponseReceiver;
+    int dnsResponseSize;
 
-    std::cout << arg.r << "\n";
-    std::cout << arg.x << "\n";
-    std::cout << arg._6 << "\n";
-    std::cout << arg.s << "\n";
-    std::cout << arg.p << "\n";
-    std::cout << arg.address << "\n";
+    // Parse arguments, send packet and parse response
+    Arguments *arg = Arguments::parse_arguments(argc, argv);    	// Parse command-line arguments into an 'Arguments' object
+    char *dnsResponse = request->execute(arg, &dnsResponseSize);    // Send DNS request
+    response->parse(dnsResponse, &dnsResponseSize);                 // Parse DNS answer
 
+    // Free memory
+    delete[] dnsResponse;
     return 0;
 }

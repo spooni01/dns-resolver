@@ -1,0 +1,109 @@
+% Project:     DNS resolver
+% @file        doc/documentation.tex
+% @date        14.11.2023
+% 
+% @brief Documentation file
+%
+% @author Adam Ližičiar <xlizic00@stud.fit.vutbr.cz>
+
+\documentclass[a4paper, 11pt]{article}
+
+\usepackage[slovak]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[left=2cm, top=3cm, text={17cm, 24cm}]{geometry}
+\usepackage{times}
+\usepackage{verbatim}
+\usepackage{enumitem}
+\usepackage{graphicx}
+\usepackage[unicode]{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    urlcolor=blue, 
+    citecolor=blue
+}
+
+\begin{document}
+
+	%%%%% Titulná stránka %%%%%
+	\begin{titlepage}
+		\begin{center}
+			\includegraphics[width=0.77\linewidth]{res/logo_FIT.pdf} \\
+
+			\vspace{\stretch{0.382}}
+
+			\scalebox{2}{\Huge{Manuál}} \\
+			\LARGE{DNS Resolver} \\
+			\vspace{\stretch{0.618}}
+		\end{center}
+
+		\begin{minipage}[b]{0.4 \textwidth}
+			\raggedright
+			{\Large \today}
+		\end{minipage}
+		\hfill
+		\begin{minipage}[b]{0.6 \textwidth}
+			\raggedleft
+			\Large
+			Adam Ližičiar (xlizic00)\\
+		\end{minipage}		
+	\end{titlepage}
+
+	%%%%% Obsah %%%%%
+	\pagenumbering{roman}
+	\setcounter{page}{1}
+	\tableofcontents
+	\clearpage
+
+	\pagenumbering{arabic}
+	\setcounter{page}{1}
+	
+	%%%%% Úvod %%%%%
+	\section{Úvod}
+	//todo: Krátky prehľad o programe a jeho účele.
+	//todo: Krátka charakteristika DNS
+	//todo: Informácie o verzii a autorských právach.
+
+	%%%%% Inštalácia a konfigurácia %%%%%
+	\section{Inštalácia a konfigurácia}
+	//todo: Pokyny pre inštaláciu programu.
+	//todo: Požiadavky na systém a kompatibilita.
+	
+	%%%%% Spúštanie programu %%%%%
+	\section{Spúštanie programu}
+	//todo: Podrobný popis ako spustiť aplikáciu.
+	//todo: Vysvetlenie rôznych spustiteľných parametrov (ako -r, -x, -6, -s, -p a iné).
+
+	%%%%% Analýza a interpretácia výstupov %%%%%
+	\section{Analýza a interpretácia výstupov}
+	//todo: Ako čítať a interpretovať výstupy programu.
+	//todo: Príklady výstupov a ich význam.
+
+	%%%%% Riešenia problémov a chybové hlášky %%%%%
+	\section{Riešenia problémov a chybové hlášky}
+	//todo: Bežné problémy a ich riešenia.
+	//todo: Vysvetlenie chybových hlášok a kroky k ich odstráneniu.
+	
+	%%%%% Architektúra programu %%%%%
+	\section{Architektúra programu}
+	//todo: Stručný popis kľúčových častí programu.
+
+	%%%%% Testovanie programu %%%%%
+	\section{Testovanie programu}
+	//todo: Postupy a nástroje pre testovanie aplikácie.
+	//todo: Príklady testov a ich význam.
+
+	%%%%% Rozšírenia %%%%%
+	\section{Rozšírenia}
+	//todo: Aké rozšírenia má program? (podpora viac vecí, chybové kódy, chybové hlášky,...)
+
+	%%%%% Referencie %%%%%
+	\section{Referencie}
+	//todo: referencie
+
+	%%%%% Prílohy %%%%%
+	\section{Prílohy}
+	//todo: referencie
+
+
+\end{document}
