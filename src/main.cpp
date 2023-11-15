@@ -1,15 +1,16 @@
 /************************************************************
 * Project:     	DNS resolver								*
 * File:        	main.cpp	    							*
-* Date:        	11.10.2023									*
+* Date:        	15.11.2023									*
 * Author: 		Adam Ližičiar <xlizic00@stud.fit.vutbr.cz>	*
 *************************************************************/
-#include "main.hpp"
+#include "libraries/main.hpp"
 
 /*
  *  Main function
  */
 int main(int argc, char *argv[]) {
+
     DnsRequestSender *request = new DnsRequestSender;
     DnsResponseReceiver *response = new DnsResponseReceiver;
     int dnsResponseSize;
@@ -22,4 +23,5 @@ int main(int argc, char *argv[]) {
     // Free memory
     delete[] dnsResponse;
     return 0;
+    
 }

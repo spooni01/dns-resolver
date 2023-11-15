@@ -71,17 +71,17 @@ Arguments* Arguments::parse_arguments(int argc, char **argv) {
                 arguments->print_help();
                 break;
             case '?':
-                Error("Invalid argument given");
+                Error(ERR_ARG_INVALID_ARGUMENT, "invalid argument given");
         }
     }
 
     // Check for additional arguments
     if ((optind + 1) != argc) {
-        Error("Error, unusual parameters given");
+        Error(ERR_ARG_UNUSUAL_PARAMETER, "unusual parameters given");
     }
     // Check if server is missing
     else if (!wasServer) {
-        Error("Missing -s argument");
+        Error(ERR_ARG_MISSING_SERVER, "missing `-s` argument");
     }
 
     arguments->target = argv[optind];
