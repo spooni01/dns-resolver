@@ -5,11 +5,6 @@
 * Author: 		Adam Ližičiar <xlizic00@stud.fit.vutbr.cz>	*
 *************************************************************/	
 
-#include <iostream>
-#include <cstring>
-#include <cstdint>
-#include <arpa/inet.h>
-
 /*
  *  Class for parsing response from DNS server
  */

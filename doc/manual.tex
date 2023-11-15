@@ -73,6 +73,8 @@
 	\section{Spúštanie programu}
 	//todo: Podrobný popis ako spustiť aplikáciu.
 	//todo: Vysvetlenie rôznych spustiteľných parametrov (ako -r, -x, -6, -s, -p a iné).
+	//staci v dokumentacii: V zadání projektu je napsáno, že argumenty lze zadávat v libovolném pořadí. Avšak na serveru Eva je nastavena proměnná prostředí POSIXLY_CORRECT, což způsobí zastavení zpracování, pokud funkce getopt narazí na argument, který není obsažen v optstring. Z tohoto důvodu musí být dotazované jméno uvedeno jako poslední argument. Ostatní argumenty lze zadávat v libovolném pořadí. Je třeba něco změnit v implementaci, nebo stačí tuto podmínku zaznamenat v dokumentaci?
+	// -x a -6 nemoze byt, pretoze zaroven nemoze byt PTR a AAAA
 
 	%%%%% Analýza a interpretácia výstupov %%%%%
 	\section{Analýza a interpretácia výstupov}
@@ -96,10 +98,15 @@
 	%%%%% Rozšírenia %%%%%
 	\section{Rozšírenia}
 	//todo: Aké rozšírenia má program? (podpora viac vecí, chybové kódy, chybové hlášky,...)
+	// Errcodes
+	// Zadání nespecifikuje, které typy RDATA bychom měli být schopni zpracovávat. Existuje více než 16 typů, ale zadání se zmiňuje pouze o CNAME, A, AAAA. Měl by je program umět zpracovat všechny, nebo jen tyto tři?:::::	Tato funkcionalita je vyžadovaná v zadání. Zpracování dalších, vámi uvedených i typů záznamů z jiných RFC, lze vnímat jako funkcionalitu základní zadání rozšiřující. Pakliže se rozhodnete implementovat funkcionalitu nad rámec zadání, jasně toto rozšíření označte v souboru README a dokumentaci. Vámi implementované rozšíření řádně dokumenujte. Vaše rozhodnutí ve fázi návrhu a implementace řádně dokumentujte a vysvětlete v dokumentaci.
+
 
 	%%%%% Referencie %%%%%
 	\section{Referencie}
 	//todo: referencie
+	https://datatracker.ietf.org/doc/html/rfc1035
+	https://datatracker.ietf.org/doc/html/rfc3596
 
 	%%%%% Prílohy %%%%%
 	\section{Prílohy}

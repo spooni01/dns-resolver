@@ -1,6 +1,6 @@
 #!/bin/bash
-numOfTests_A=5
-numOfTests_AAAA=1
+numOfTests_A=4
+numOfTests_AAAA=4
 numOfTests=$((numOfTests_A + numOfTests_AAAA))
 root_dir="tests"
 counterError=0
@@ -19,7 +19,7 @@ for (( i=1; i<=$numOfTests_A; i++ )); do
     read -r args < $root_dir/$sub_dir/$i.in
 
     # Using the variables in the paths
-    ./bin/dns $args > "$root_dir/$sub_dir/$i.programOut"
+    ./dns $args > "$root_dir/$sub_dir/$i.programOut"
     result=$(diff -b "$root_dir/$sub_dir/$i.expectedOut" "$root_dir/$sub_dir/$i.programOut")
 
     if [ -n "$result" ]; then
@@ -40,7 +40,7 @@ for (( i=1; i<=$numOfTests_AAAA; i++ )); do
     read -r args < $root_dir/$sub_dir/$i.in
 
     # Using the variables in the paths
-    ./bin/dns $args > "$root_dir/$sub_dir/$i.programOut"
+    ./dns $args > "$root_dir/$sub_dir/$i.programOut"
     result=$(diff -b "$root_dir/$sub_dir/$i.expectedOut" "$root_dir/$sub_dir/$i.programOut")
 
     if [ -n "$result" ]; then
@@ -55,7 +55,7 @@ done
 #
 # Print results
 #
-echo -e "\n\n[to run tests again, please wait some time while TTL will reset]"
+echo -e "\n\n(to run tests again, please wait\nsome time until TTL will reset)"
 if [ "$counterError" -eq 0 ]; then
     echo -e "\033[0;32mALL TESTS PASSES ($numOfTests/$numOfTests)\033[0m\n"
     exit 0

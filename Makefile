@@ -10,7 +10,6 @@ CXX = g++
 CXX_FLAGS = -std=c++20 -Wall -pedantic -Werror -static-libstdc++
 DOC=manual
 OBJ_DIR = obj
-BIN_DIR = bin
 DOC_DIR = doc
 TESTS_DIR = tests
 MKDIR_P = mkdir -p
@@ -18,23 +17,23 @@ RMDIR = rm -rf
 
 #############################################################
 
-.PHONY: all doc test clean cleanall
+.PHONY: all run doc test clean cleanall
 
 ### Build BIN file
 all: build
-build: $(BIN_DIR)
-	$(CXX) $(CXX_FLAGS) $(SRC_FILES) -o $(BIN_DIR)/$(OUTPUT_NAME)
+build: 
+	$(CXX) $(CXX_FLAGS) $(SRC_FILES) -o $(OUTPUT_NAME)
+
+### Run default
+run:
+	./$(OUTPUT_NAME) -r -s kazi.fit.vutbr.cz www.fit.vut.cz
 
 ### Create directories 
-create_directories: $(OBJ_DIR) $(BIN_DIR)
+create_directories: $(OBJ_DIR) 
 
 # Create object directory
 $(OBJ_DIR):
 	$(MKDIR_P) $(OBJ_DIR)
-
-# Create binary directory
-$(BIN_DIR):
-	$(MKDIR_P) $(BIN_DIR)
 
 ### Tests
 test: all
@@ -68,8 +67,8 @@ clean:
 
 # Clean all object and binary files
 cleanall: clean
-	$(RMDIR) $(BIN_DIR) 2> nul || true
 	$(RMDIR) $(DOC_DIR)/$(DOC).pdf
 	$(RMDIR) $(TESTS_DIR)/spec/*.programOut
+	$(RMDIR) dns
 	$(RMDIR) nul
 	$(RMDIR) nul

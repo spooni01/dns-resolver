@@ -1,9 +1,9 @@
 Authoritative: No, Recursive: Yes, Truncated: No
 Question section (1)
-  www.standard.sk., A, IN
+  www.standard.sk., AAAA, IN
 Answer section (3)
   www.standard.sk., CNAME, IN, 60, starfish-app-i9kur.ondigitalocean.app.
-  starfish-app-i9kur.ondigitalocean.app., A, IN, 300, 172.66.0.96
-  starfish-app-i9kur.ondigitalocean.app., A, IN, 300, 162.159.140.98
+  starfish-app-i9kur.ondigitalocean.app., AAAA, IN, 300, 2606:4700:7::60
+  starfish-app-i9kur.ondigitalocean.app., AAAA, IN, 300, 2a06:98c1:58::60
 Authority section (0)
 Additional section (0)
