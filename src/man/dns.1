@@ -1,0 +1,35 @@
+.TH DNS 1 "16.11.2023"
+.SH NAME
+dns \- send DNS queries and display responses
+.SH SYNOPSIS
+.B dns
+[\-r] [\-x] [\-6] \-s server [\fI\-p port\fR] address
+.SH DESCRIPTION
+.PP
+The
+.B dns
+Program sends DNS queries to specified DNS servers and displays the received responses on standard output.
+.SH OPTIONS
+.TP
+.B \-r
+Request recursion (Recursion Desired = 1). Otherwise, no recursion.
+.TP
+.B \-x
+Reverse query instead of direct.
+.TP
+.B \-6
+AAAA type query instead of the default A type.
+.TP
+.B \-s server
+IP address or domain name of the server to which the query should be sent.
+.TP
+\fI\-p port\fR
+The port number to which the query should be sent. The default is 53.
+.TP
+.B address
+The address to be queried.
+.SH "SEE ALSO"
+.PP
+rfc1035(1), dig(1), nslookup(1)
+.SH AUTHOR
+Adam Ližičiar (xlizic00@stud.fit.vutbr.cz)

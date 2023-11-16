@@ -30,6 +30,7 @@ doc/*.out
 doc/*.toc
 doc/*.pdf.filepart
 doc/*.synctex(busy)
+doc/*.xdv
 obj/*.aux
 obj/*.fls
 obj/*.log
@@ -44,4 +45,5 @@ obj/*.out
 obj/*.toc
 obj/*.pdf.filepart
 obj/*.synctex(busy)
+obj/*.xdv
 

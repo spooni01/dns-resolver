@@ -63,6 +63,37 @@
 	//todo: Krátky prehľad o programe a jeho účele.
 	//todo: Krátka charakteristika DNS
 	//todo: Informácie o verzii a autorských právach.
+	Napište program dns, který bude umět zasílat dotazy na DNS servery a v čitelné podobě vypisovat přijaté odpovědi na standardní výstup. Sestavení a analýza DNS paketů musí být implementována přímo v programu dns. Stačí uvažovat pouze komunikaci pomocí UDP.
+
+
+
+	Není-li v jiné části zadání specifikováno jinak, je při vytváření programu povoleno použít hlavičkové soubory pro práci se sokety a další obvyklé funkce používané v síťovém prostředí (jako je netinet/*, sys/*, arpa/* apod.), knihovnu pro práci s vlákny (pthread), signály, časem, stejně jako standardní knihovnu jazyka C (varianty ISO/ANSI i POSIX), C++ a STL. Jiné knihovny nejsou povoleny.
+
+
+
+	Spuštění aplikace
+
+	Použití: dns [-r] [-x] [-6] -s server [-p port] adresa
+
+
+
+	Pořadí parametrů je libovolné. Popis parametrů:
+
+	-r: Požadována rekurze (Recursion Desired = 1), jinak bez rekurze.
+	-x: Reverzní dotaz místo přímého.
+	-6: Dotaz typu AAAA místo výchozího A.
+	-s: IP adresa nebo doménové jméno serveru, kam se má zaslat dotaz.
+	-p port: Číslo portu, na který se má poslat dotaz, výchozí 53.
+	adresa: Dotazovaná adresa.
+	Podporované typy dotazů
+
+
+
+	Program dns se v odpovědích musí vypořádat se záznamy typu CNAME. Není požadována podpora DNSSEC.
+
+
+
+
 
 	%%%%% Inštalácia a konfigurácia %%%%%
 	\section{Inštalácia a konfigurácia}
@@ -73,9 +104,62 @@
 	\section{Spúštanie programu}
 	//todo: Podrobný popis ako spustiť aplikáciu.
 	//todo: Vysvetlenie rôznych spustiteľných parametrov (ako -r, -x, -6, -s, -p a iné).
-	//staci v dokumentacii: V zadání projektu je napsáno, že argumenty lze zadávat v libovolném pořadí. Avšak na serveru Eva je nastavena proměnná prostředí POSIXLY_CORRECT, což způsobí zastavení zpracování, pokud funkce getopt narazí na argument, který není obsažen v optstring. Z tohoto důvodu musí být dotazované jméno uvedeno jako poslední argument. Ostatní argumenty lze zadávat v libovolném pořadí. Je třeba něco změnit v implementaci, nebo stačí tuto podmínku zaznamenat v dokumentaci?
-	// -x a -6 nemoze byt, pretoze zaroven nemoze byt PTR a AAAA
+	%//staci v dokumentacii: V zadání projektu je napsáno, že argumenty lze zadávat v libovolném pořadí. Avšak na serveru Eva je nastavena proměnná prostředí POSIXLY_CORRECT, což způsobí zastavení zpracování, pokud funkce getopt narazí na argument, který není obsažen v optstring. Z tohoto důvodu musí být dotazované jméno uvedeno jako poslední argument. Ostatní argumenty lze zadávat v libovolném pořadí. Je třeba něco změnit v implementaci, nebo stačí tuto podmínku zaznamenat v dokumentaci
+	// co robi aky parameter.. aj help a vystup
 
+	
+	Výstup aplikace
+
+
+
+	Na standardní výstup vypište informaci o tom, zda je získaná odpověď autoritativní, zda byla zjištěna rekurzivně a zda byla odpověď zkrácena. Dále vypište všechny sekce a záznamy obdržené v odpovědi.
+
+
+
+	Pro každou sekci v odpovědi vypište její název a počet získaných záznamů. Pro každý záznam vypište jeho název, typ, třídu, TTL a data.
+
+
+
+	Ukázka možného výstupu:
+
+
+
+	%$ dns -r -s kazi.fit.vutbr.cz www.fit.vut.cz
+
+	Authoritative: No, Recursive: Yes, Truncated: No
+
+	Question section (1)
+
+	www.fit.vut.cz., A, IN
+
+	Answer section (1)
+
+	www.fit.vut.cz., A, IN, 14400, 147.229.9.26
+
+	Authority section (0)
+
+	Additional section (0)
+
+	%$ dns -r -s kazi.fit.vutbr.cz www.github.com
+
+	Authoritative: No, Recursive: Yes, Truncated: No
+
+	Question section (1)
+
+	www.github.com., A, IN
+
+	Answer section (2)
+
+	www.github.com., CNAME, IN, 3600, github.com.
+
+	github.com., A, IN, 60, 140.82.121.3
+
+	Authority section (0)
+
+	Additional section (0)
+
+
+	je tam kontrola na format vstupu argumentov
 	%%%%% Analýza a interpretácia výstupov %%%%%
 	\section{Analýza a interpretácia výstupov}
 	//todo: Ako čítať a interpretovať výstupy programu.
@@ -94,12 +178,21 @@
 	\section{Testovanie programu}
 	//todo: Postupy a nástroje pre testovanie aplikácie.
 	//todo: Príklady testov a ich význam.
+	// testy su ok, a treba cakat kvoli zmene TTL.....Obsah databáze DNS se z principů mění a může vypadat z různých míst různě. Např. doporučuji se serveru kazi.fit.vutbr.cz ptát ze sítě FIT. Do jiných sítí mohou být odpovědi jiné. Ukázkové záznamy jsou mimo mou kontrolu a mohou se nepředvídatelně měnit, v průběhu řešení projektu mohou být zrušená, dočasně nedostupná, nově přesměrovaná jinam apod.
+	
+	Referenční prostředí pro překlad a testování
+
+	Program by měl být přenositelný. Referenční prostředí pro překlad budou servery eva.fit.vutbr.cz a merlin.fit.vutbr.cz (program musí být přeložitelný a funkční na obou systémech). Vlastní testování může probíhat na jiném počítači s nainstalovaným OS GNU/Linux, či FreeBSD, včetně jiných architektur než Intel/AMD, jiných distribucí, jiných verzí knihoven apod. Pokud vyžadujete minimální verzi knihovny (dostupné na serveru merlin a eva), jasně tuto skutečnost označte v dokumentaci a README.
+
+	%error testy testuju, ci na vystupe je chybovy vystup "[31m[0m"
 
 	%%%%% Rozšírenia %%%%%
 	\section{Rozšírenia}
 	//todo: Aké rozšírenia má program? (podpora viac vecí, chybové kódy, chybové hlášky,...)
 	// Errcodes
 	// Zadání nespecifikuje, které typy RDATA bychom měli být schopni zpracovávat. Existuje více než 16 typů, ale zadání se zmiňuje pouze o CNAME, A, AAAA. Měl by je program umět zpracovat všechny, nebo jen tyto tři?:::::	Tato funkcionalita je vyžadovaná v zadání. Zpracování dalších, vámi uvedených i typů záznamů z jiných RFC, lze vnímat jako funkcionalitu základní zadání rozšiřující. Pakliže se rozhodnete implementovat funkcionalitu nad rámec zadání, jasně toto rozšíření označte v souboru README a dokumentaci. Vámi implementované rozšíření řádně dokumenujte. Vaše rozhodnutí ve fázi návrhu a implementace řádně dokumentujte a vysvětlete v dokumentaci.
+	je tam kontrola na format vstupu argumentov
+	// man stranka v src/man/dns.1
 
 
 	%%%%% Referencie %%%%%
@@ -110,7 +203,7 @@
 
 	%%%%% Prílohy %%%%%
 	\section{Prílohy}
-	//todo: referencie
+	// wireshark photo
 
 
 \end{document}

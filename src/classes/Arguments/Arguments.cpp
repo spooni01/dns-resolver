@@ -1,20 +1,23 @@
-/************************************************************
+ /************************************************************
 * Project:     	DNS resolver								*
 * File:        	Arguments.cpp								*
 * Date:        	11.10.2023									*
 * Author: 		Adam Ližičiar <xlizic00@stud.fit.vutbr.cz>	*
 *************************************************************/	
 
-// Class to parse arguments and show help message
+/*
+ *  Class to parse arguments and show help message
+ */
 class Arguments {
     public:
-        bool recursionDesired;  // Recursive desired
-        bool reverseQuery;      // Reverse query
-        bool ipv6;              // Query type AAAA instead of default A
-        std::string dnsServer;  // IP/domain address
-        std::string port;       // Port
-        std::string target;     // Queried address
-        static Arguments* parse_arguments(int argc, char **argv);
+        bool                recursionDesired;  // Recursive desired
+        bool                reverseQuery;      // Reverse query
+        bool                ipv6;              // Query type AAAA instead of default A
+        std::string         dnsServer;  // IP/domain address
+        std::string         port;       // Port
+        std::string         target;     // Queried address
+        static Arguments*   parse_arguments(int argc, char **argv);
+        static void         check_regex_of_server(Arguments *args);
 
     // Constructor
     Arguments() {
@@ -42,7 +45,9 @@ class Arguments {
     }
 };
 
-// Function will parse arguments from STDIN into `Arguments*` structure
+/*
+ *  Function will parse arguments from STDIN into `Arguments*` structure
+ */ 
 Arguments* Arguments::parse_arguments(int argc, char **argv) {
     Arguments *arguments = new Arguments();
     bool wasServer = false;
@@ -85,5 +90,38 @@ Arguments* Arguments::parse_arguments(int argc, char **argv) {
     }
 
     arguments->target = argv[optind];
+
+    // Check regex of server and target
+    check_regex_of_server(arguments);
+
     return arguments;
+}
+
+/*
+ *  Check if regex of server and target is correct
+ */
+void Arguments::check_regex_of_server(Arguments *args) {
+
+    struct sockaddr_in sa;
+    struct sockaddr_in6 sa6;
+
+    // Check server
+    if(args->reverseQuery == true) {
+        if(args->ipv6 == true) {
+            if(inet_pton(AF_INET6, args->target.c_str(), &(sa6.sin6_addr)) != 1)
+                Error(ERR_ARG_IS_NOT_IPV6_ADDRESS, "the target `%s` is not IPv6", args->target);
+        }
+        else {
+            if(inet_pton(AF_INET, args->target.c_str(), &(sa.sin_addr)) != 1)
+                Error(ERR_ARG_IS_NOT_IPV4_ADDRESS, "the target `%s` is not IPv4", args->target);
+        
+        }
+    }
+    else {
+        std::regex websitePattern("^(https?://)?(www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{2,256}\\.[a-z]{2,6}\\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)$");
+        if(std::regex_match(args->target, websitePattern) != true)
+            Error(ERR_ARG_IS_NOT_WEBSITE, "the target `%s` is not a website url", args->target);
+  
+    }
+
 }

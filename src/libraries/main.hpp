@@ -9,17 +9,18 @@
 #define MAIN_H
 
     #include <iostream>
+    #include <arpa/inet.h>
+    #include <sys/socket.h>
+    #include <netdb.h>
+    #include <stdint.h>
     #include <string>
     #include <vector>
     #include <algorithm>
     #include <iomanip>
     #include <stdlib.h>
+    #include <regex>
     #include <unistd.h>
     #include <string.h>
-    #include <arpa/inet.h>
-    #include <sys/socket.h>
-    #include <netdb.h>
-    #include <stdint.h>
 
     #include "ansi_colors.hpp"
     #include "dns_structures.hpp"

@@ -1,8 +1,0 @@
-Authoritative: No, Recursive: Yes, Truncated: No
-Question section (1)
-  www.slovensko.sk., AAAA, IN
-Answer section (2)
-  www.slovensko.sk., CNAME, IN, 300, slovensko.sk.
-  slovensko.sk., AAAA, IN, 300, 2a04:f480:1::10:194
-Authority section (0)
-Additional section (0)

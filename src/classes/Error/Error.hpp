@@ -15,6 +15,10 @@ enum ErrCode {
     ERR_ARG_INVALID_ARGUMENT            = 10,
     ERR_ARG_UNUSUAL_PARAMETER           = 11,
     ERR_ARG_MISSING_SERVER              = 12,
+    ERR_ARG_CAN_NOT_BE_X_AND_IPV6       = 13,
+    ERR_ARG_IS_NOT_IPV4_ADDRESS         = 14,
+    ERR_ARG_IS_NOT_IPV6_ADDRESS         = 15,
+    ERR_ARG_IS_NOT_WEBSITE              = 16,
 
     // DNS request sender errors
     ERR_DNS_S_UNABLE_LOAD_SERVER        = 30,
