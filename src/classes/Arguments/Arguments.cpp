@@ -102,26 +102,23 @@ Arguments* Arguments::parse_arguments(int argc, char **argv) {
  */
 void Arguments::check_regex_of_server(Arguments *args) {
 
-    struct sockaddr_in sa;
-    struct sockaddr_in6 sa6;
+    std::regex ipv4Pattern("^(\\d{1,3}(\\.\\d{1,3}){3})$");
+    std::regex ipv6Pattern("^([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}$");
+    std::regex websitePattern("^(https?://)?(www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{2,256}\\.[a-z]{2,6}\\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)$");
 
-    // Check server
-    if(args->reverseQuery == true) {
-        if(args->ipv6 == true) {
-            if(inet_pton(AF_INET6, args->target.c_str(), &(sa6.sin6_addr)) != 1)
-                Error(ERR_ARG_IS_NOT_IPV6_ADDRESS, "the target `%s` is not IPv6", args->target);
+    if(args->reverseQuery) {
+        if(args->ipv6) {
+            if(!std::regex_match(args->target, ipv6Pattern))
+                Error(ERR_ARG_IS_NOT_IPV6_ADDRESS, "the target `%s` is not IPv6", args->target.c_str());
         }
         else {
-            if(inet_pton(AF_INET, args->target.c_str(), &(sa.sin_addr)) != 1)
-                Error(ERR_ARG_IS_NOT_IPV4_ADDRESS, "the target `%s` is not IPv4", args->target);
-        
+            if(!std::regex_match(args->target, ipv4Pattern))
+                Error(ERR_ARG_IS_NOT_IPV4_ADDRESS, "the target `%s` is not IPv4", args->target.c_str());
         }
     }
     else {
-        std::regex websitePattern("^(https?://)?(www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{2,256}\\.[a-z]{2,6}\\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)$");
-        if(std::regex_match(args->target, websitePattern) != true)
-            Error(ERR_ARG_IS_NOT_WEBSITE, "the target `%s` is not a website url", args->target);
-  
+        if(!std::regex_match(args->target, websitePattern))
+            Error(ERR_ARG_IS_NOT_WEBSITE, "the target `%s` is not a website url", args->target.c_str());
     }
-
+    
 }

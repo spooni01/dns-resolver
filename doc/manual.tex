@@ -60,110 +60,94 @@
 	
 	%%%%% Úvod %%%%%
 	\section{Úvod}
-	//todo: Krátky prehľad o programe a jeho účele.
-	//todo: Krátka charakteristika DNS
-	//todo: Informácie o verzii a autorských právach.
-	Napište program dns, který bude umět zasílat dotazy na DNS servery a v čitelné podobě vypisovat přijaté odpovědi na standardní výstup. Sestavení a analýza DNS paketů musí být implementována přímo v programu dns. Stačí uvažovat pouze komunikaci pomocí UDP.
+	DNS (Domain Name System) resolver je~kľúčovou súčasťou internetovej infraštruktúry, umožňujúcou prevod ľudom čitateľných doménových mien (ako je~napríklad \texttt{www.fit.vut.cz}) na~IP adresy, ktoré~ ~používané pre~sieťovú komunikáciu. Tento dokument poskytuje prehľad funkcií a~implementácie programu \texttt{dns}, ktorý bol navrhnutý na~zasielanie dotazov na~DNS servery a~na~zobrazenie prijatých odpovedí na~štandartnom výstupe.
+	\subsection{Charakteristika DNS}
+	DNS je~hierarchický a~decentralizovaný systém, ktorý~umožňuje užívateľom na~internete nájsť webové stránky a~iné služby prostredníctvom ľudom čitateľných názvov, tzv.~doménových mien. DNS servery sú~zodpovedné za~prevod týchto názvov na~IP adresy (alebo naopak), ktoré sú~nevyhnutné pre~nadviazanie sieťového spojenia.
+	\subsection{Funkcie a účel programu DNS resolver}
+	Program \texttt{dns} je nástroj navrhnutý na~zasielanie dotazov na~DNS servery a~analýzu prijatých odpovedí. Umožňuje používateľom vykonávať dotazy v~čitelné podobe a~poskytuje informácie o~odpovediach od~DNS serverov. Priamo v~programe je~implementované zostavenie a~odoslanie packetov, bez~potreby nástrojov. Program podporuje komunikáciu pomocou UDP.	
 
-
-
-	Není-li v jiné části zadání specifikováno jinak, je při vytváření programu povoleno použít hlavičkové soubory pro práci se sokety a další obvyklé funkce používané v síťovém prostředí (jako je netinet/*, sys/*, arpa/* apod.), knihovnu pro práci s vlákny (pthread), signály, časem, stejně jako standardní knihovnu jazyka C (varianty ISO/ANSI i POSIX), C++ a STL. Jiné knihovny nejsou povoleny.
-
-
-
-	Spuštění aplikace
-
-	Použití: dns [-r] [-x] [-6] -s server [-p port] adresa
-
-
-
-	Pořadí parametrů je libovolné. Popis parametrů:
-
-	-r: Požadována rekurze (Recursion Desired = 1), jinak bez rekurze.
-	-x: Reverzní dotaz místo přímého.
-	-6: Dotaz typu AAAA místo výchozího A.
-	-s: IP adresa nebo doménové jméno serveru, kam se má zaslat dotaz.
-	-p port: Číslo portu, na který se má poslat dotaz, výchozí 53.
-	adresa: Dotazovaná adresa.
-	Podporované typy dotazů
-
-
-
-	Program dns se v odpovědích musí vypořádat se záznamy typu CNAME. Není požadována podpora DNSSEC.
-
-
-
-
-
-	%%%%% Inštalácia a konfigurácia %%%%%
-	\section{Inštalácia a konfigurácia}
-	//todo: Pokyny pre inštaláciu programu.
-	//todo: Požiadavky na systém a kompatibilita.
+	%%%%% Vytvorenie spustiteľného súboru %%%%%
+	\section{Vytvorenie spustiteľného súboru a~automatizácia úloh}
+	Prebieha pomocou Makefile na~automatizáciu kompilácie, testovania a~generovania dokumentácie. 
+	\begin{itemize}
+		\item \texttt{make}: Kompiluje zdrojové súbory projektu a~pomocou kompilátora \texttt{g++} vytvára spustiteľný súbor \texttt{dns}.
+		\item \texttt{make run}: Spustí skompilovaný program \texttt{dns} s~preddefinovanými argumentmi, čím~demonštruje jeho funkčnosť.
+		\item \texttt{make test}: Spustí testovacie skripty definované v adresári \texttt{tests}, čím overuje správnosť implementácie programu.
+		\item \texttt{make doc}: Generuje dokumentáciu projektu vo~formáte PDF pomocou nástroja \texttt{pdflatex}. Všetky súborové operácie sú~vykonávané v~rámci adresára \texttt{doc} a~výsledná dokumentácia je~presunutá do~objektového adresára \texttt{obj} pre~udržanie poriadku.
+		\item \texttt{make clean}: Odstráni všetky objektové a~dočasné súbory, ktoré boli vytvorené počas kompilácie, čím~udržuje projektový adresár čistý.
+		\item \texttt{make cleanall}: Rozširuje funkcionalitu \texttt{clean} o~odstránenie spustiteľného súboru \texttt{dns}, vygenerovanej dokumentácie v~PDF a~všetkých výstupov z~testov.
+	\end{itemize}
+	\subsection{Požiadavky na systém}
+	Pre~úspešnú kompiláciu a~fungovanie programu je~potrebné zabezpečiť, aby bol program spustený v~operačnom systéme Linux.
 	
 	%%%%% Spúštanie programu %%%%%
 	\section{Spúštanie programu}
-	//todo: Podrobný popis ako spustiť aplikáciu.
-	//todo: Vysvetlenie rôznych spustiteľných parametrov (ako -r, -x, -6, -s, -p a iné).
-	%//staci v dokumentacii: V zadání projektu je napsáno, že argumenty lze zadávat v libovolném pořadí. Avšak na serveru Eva je nastavena proměnná prostředí POSIXLY_CORRECT, což způsobí zastavení zpracování, pokud funkce getopt narazí na argument, který není obsažen v optstring. Z tohoto důvodu musí být dotazované jméno uvedeno jako poslední argument. Ostatní argumenty lze zadávat v libovolném pořadí. Je třeba něco změnit v implementaci, nebo stačí tuto podmínku zaznamenat v dokumentaci
-	// co robi aky parameter.. aj help a vystup
-
+	Použitie príkazu \texttt{dns} je~nasledovné:
+	\begin{verbatim}
+	dns [-h] [-r] [-x] [-6] -s server [-p port] adresa
+	\end{verbatim}
+	Poradie parametrov je~ľubovoľné, ak nie je nastavená premenná prostredia $POSIXLY_CORRECT$. Každý parameter má~špecifický význam:
+	\begin{itemize}
+		\item \texttt{-h}: Vypíše vysvetlenie použitia parametrov do~štandartného výstupu. Príklad výstupu je v prílohe \ref{subsection:res_A}
+		\item \texttt{-r}: Požadovaná rekurzia (Recursion Desired = 1), inak bez~rekurzie.
+		\item \texttt{-x}: Reverzný dotaz namiesto priameho.
+		\item \texttt{-6}: Dotaz typu \texttt{AAAA} namiesto preddefinovaného \texttt{A}.
+		\item \texttt{-s server}: IP~adresa alebo~doménové meno servera, kam sa má~odoslať dotaz.
+		\item \texttt{-p port}: Číslo portu, na~ktorý sa má~odoslať dotaz, preddefinovaný je~53.
+		\item \texttt{adresa}: Adresa na zistenie.
+	\end{itemize}
 	
-	Výstup aplikace
+	\subsection{Príklady výstupov}
+	\noindent Odpoveď na príkaz \texttt{./dns -r -s kazi.fit.vutbr.cz www.fit.vut.cz}
+	\begin{verbatim}
+		Authoritative: Yes, Recursive: Yes, Truncated: No
+		Question section (1)
+		  www.fit.vut.cz., A, IN
+		Answer section (1)
+		  www.fit.vut.cz., A, IN, 14400, 147.229.9.26
+		Authority section (0)
+		Additional section (0)
+	\end{verbatim}
 
+	\noindent Odpoveď na príkaz \texttt{./dns -r -6 -s kazi.fit.vutbr.cz www.fit.vut.cz}
+	\begin{verbatim}
+		Authoritative: Yes, Recursive: Yes, Truncated: No
+		Question section (1)
+		  www.fit.vut.cz., AAAA, IN
+		Answer section (1)
+		  www.fit.vut.cz., AAAA, IN, 14400, 2001:67c:1220:809::93e5:91a
+		Authority section (0)
+		Additional section (0)
+	\end{verbatim}
 
-
-	Na standardní výstup vypište informaci o tom, zda je získaná odpověď autoritativní, zda byla zjištěna rekurzivně a zda byla odpověď zkrácena. Dále vypište všechny sekce a záznamy obdržené v odpovědi.
-
-
-
-	Pro každou sekci v odpovědi vypište její název a počet získaných záznamů. Pro každý záznam vypište jeho název, typ, třídu, TTL a data.
-
-
-
-	Ukázka možného výstupu:
-
-
-
-	%$ dns -r -s kazi.fit.vutbr.cz www.fit.vut.cz
-
-	Authoritative: No, Recursive: Yes, Truncated: No
-
-	Question section (1)
-
-	www.fit.vut.cz., A, IN
-
-	Answer section (1)
-
-	www.fit.vut.cz., A, IN, 14400, 147.229.9.26
-
-	Authority section (0)
-
-	Additional section (0)
-
-	%$ dns -r -s kazi.fit.vutbr.cz www.github.com
-
-	Authoritative: No, Recursive: Yes, Truncated: No
-
-	Question section (1)
-
-	www.github.com., A, IN
-
-	Answer section (2)
-
-	www.github.com., CNAME, IN, 3600, github.com.
-
-	github.com., A, IN, 60, 140.82.121.3
-
-	Authority section (0)
-
-	Additional section (0)
-
-
-	je tam kontrola na format vstupu argumentov
+	\noindent Odpoveď na príkaz \texttt{./dns -x -s kazi.fit.vutbr.cz 147.229.9.26}
+	\begin{verbatim}
+		Authoritative: Yes, Recursive: No, Truncated: No
+		Question section (1)
+		  26.9.229.147.in-addr.arpa., PTR, IN
+		Answer section (1)
+		  26.9.229.147.in-addr.arpa., PTR, IN, 14400, www.fit.vut.cz.
+		Authority section (4)
+		  9.229.147.in-addr.arpa., NS, IN, 14400, rhino.cis.vutbr.cz.
+		  9.229.147.in-addr.arpa., NS, IN, 14400, gate.feec.vutbr.cz.
+		  9.229.147.in-addr.arpa., NS, IN, 14400, guta.fit.vutbr.cz.
+		  9.229.147.in-addr.arpa., NS, IN, 14400, kazi.fit.vutbr.cz.
+		Additional section (0)
+	\end{verbatim}
+	
 	%%%%% Analýza a interpretácia výstupov %%%%%
-	\section{Analýza a interpretácia výstupov}
-	//todo: Ako čítať a interpretovať výstupy programu.
-	//todo: Príklady výstupov a ich význam.
+	\section{Analýza a~interpretácia výstupov}
+	Táto sekcia rozoberá, čo~možno zistiť vďaka použitiu programu \texttt{dns}.
+	\subsection{Rekurzívne a~nerekurzívne dotazy}
+	Umožňuje určiť, či sa~má vykonať rekurzívny (-r) alebo nerekurzívny dotaz. Rekurzívne dotazy žiadajú DNS server o~kompletnú odpoveď, zatiaľ čo~nerekurzívne vrátia len informácie, ktoré server už má.
+	\subsection{Reverzné dotazy}
+	Program umožňuje vykonávať reverzné dotazy (-x), vďaka čomu možno zistiť doménové meno priradené k~erčitej IP adrese.
+	\subsection{Typy dotazov AAAA a~A}
+	Poskytuje možnosť vykonávať dotazy typu AAAA~(-6) pre~získanie IPv6 adries alebo typu A pre~IPv4 adresy, čo umožňuje flexibilitu v~získavaní sieťových informácií.
+	\subsection{Výstupy a~ich interpretácia}
+	Výstupy programu sú~prehľadné a informatívne, poskytujú podrobné údaje o~odpovediach DNS serverov. Umožňujú získať dôležité informácie vrátane autoritatívnosti odpovede, rekurzívnych vlastností a~detailov o~dotazovanej adrese.
+	\subsection{Využitie výsledkov}
+	Na~základe analýzy výsledkov možno získať užitočné informácie pre~sieťovú diagnostiku, administráciu a~plánovanie.
 
 	%%%%% Riešenia problémov a chybové hlášky %%%%%
 	\section{Riešenia problémov a chybové hlášky}
@@ -202,8 +186,17 @@
 	https://datatracker.ietf.org/doc/html/rfc3596
 
 	%%%%% Prílohy %%%%%
+	\clearpage
 	\section{Prílohy}
-	// wireshark photo
+	
+	\subsection{Výpis \texttt{./dns -h} na~štandartnom výstupe}
+	\label{subsection:res_A}
 
+	\begin{figure}[ht]
+		\centering
+		\includegraphics[width=1 \linewidth]{res/A.png}
+
+		\caption{Príklad výstupu \texttt{./dns -h} na~štandartnom výstupe. Príklad bol realizovaný na~serveri \mbox{merlin.fit.vutbr.cz}}
+	\end{figure}
 
 \end{document}
