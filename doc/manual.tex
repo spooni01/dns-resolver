@@ -14,6 +14,8 @@
 \usepackage{times}
 \usepackage{verbatim}
 \usepackage{enumitem}
+\usepackage{listings}
+\usepackage{color}
 \usepackage{graphicx}
 \usepackage{tabularx}
 \usepackage[unicode]{hyperref}
@@ -23,6 +25,21 @@
     urlcolor=blue, 
     citecolor=blue
 }
+\definecolor{mygreen}{rgb}{0,0.6,0}
+\definecolor{mygray}{rgb}{0.5,0.5,0.5}
+\definecolor{mymauve}{rgb}{0.58,0,0.82}
+\lstset{
+  backgroundcolor=\color{white},
+  basicstyle=\footnotesize,
+  breaklines=true,
+  captionpos=b,
+  commentstyle=\color{mygreen},
+  escapeinside={\%*}{*)},
+  keywordstyle=\color{blue},
+  stringstyle=\color{mymauve},
+  tabsize=4
+}
+
 
 \begin{document}
 
@@ -61,9 +78,17 @@
 	
 	%%%%% Úvod %%%%%
 	\section{Úvod}
-	DNS (Domain Name System) resolver je~kľúčovou súčasťou internetovej infraštruktúry, umožňujúcou prevod ľudom čitateľných doménových mien (ako je~napríklad \texttt{www.fit.vut.cz}) na~IP adresy, ktoré~ ~používané pre~sieťovú komunikáciu. Tento dokument poskytuje prehľad funkcií a~implementácie programu \texttt{dns}, ktorý bol navrhnutý na~zasielanie dotazov na~DNS servery a~na~zobrazenie prijatých odpovedí na~štandartnom výstupe.
+	DNS (Domain Name System) resolver je~kľúčovou súčasťou internetovej infraštruktúry, umožňujúcou prevod ľudom čitateľných doménových mien (ako je~napríklad \texttt{www.fit.vut.cz}) na~IP adresy, ktoré~ ~používané pre~sieťovú komunikáciu. Údaje ukladá do databázy na serveroch a vďaka tomu pomáha ľudom pristupovať k údajom pomocou názvov domén, a nie iba pomocou IP adries. Tento dokument poskytuje prehľad funkcií a~implementácie programu \texttt{dns}, ktorý bol navrhnutý na~zasielanie dotazov na~DNS servery a~na~zobrazenie prijatých odpovedí na~štandartnom výstupe.\newline
+
 	\subsection{Charakteristika DNS}
-	DNS je~hierarchický a~decentralizovaný systém, ktorý~umožňuje užívateľom na~internete nájsť webové stránky a~iné služby prostredníctvom ľudom čitateľných názvov, tzv.~doménových mien. DNS servery sú~zodpovedné za~prevod týchto názvov na~IP adresy (alebo naopak), ktoré sú~nevyhnutné pre~nadviazanie sieťového spojenia.
+	DNS je~hierarchický a~decentralizovaný systém, ktorý~umožňuje užívateľom na~internete nájsť webové stránky a~iné služby prostredníctvom ľudom čitateľných názvov, tzv.~doménových mien. DNS servery sú~zodpovedné za~prevod týchto názvov na~IP adresy (alebo naopak), ktoré sú~nevyhnutné pre~nadviazanie sieťového spojenia.\newline
+	Packet DNS sa skladá z hlavičky, otázky, odpovedi, autorizovanej odpovedi a zvyšných (doplňujúcich) dát.\newline
+	\texttt{Hlavička} obsahuje ID packetu, QR flagy (rozlišujú medzi otázkou a odpoveďou), TC, TD, RA, Z, OPCODE, QDCOUNT, ANCOUNT, NSCOUNT a ARCOUNT. Hlavička má vždy veľkosť 12B.\newline
+	\texttt{Otázka} sa skladá z NAME (meno domény alebo IP adresa), TYPE (typ záznamu) a CLASS (typ komunikácie).\newline
+	\texttt{Odpoveď} obsahuje odpoveď zo servera a skladá sa z NAME, TYPE, CLASS, TTL (čas platnosti odpovede), DL (dĺžka ďalšieho záznamu) a z dát odpovede.\newline
+	\texttt{Autorizovaná odpoveď} je odpoveďou zo servera, ktorý je autorizovaný.\newline
+	\texttt{Doplňujúce dáta} obsahujú dáta, ktoré aj keď nie sú priamou odpoveďou na otázku, tak môžu mať s ňou niečo spoločné.
+	
 	\subsection{Funkcie a účel programu DNS resolver}
 	Program \texttt{dns} je nástroj navrhnutý na~zasielanie dotazov na~DNS servery a~analýzu prijatých odpovedí. Umožňuje používateľom vykonávať dotazy v~čitelné podobe a~poskytuje informácie o~odpovediach od~DNS serverov. Priamo v~programe je~implementované zostavenie a~odoslanie packetov, bez~potreby nástrojov. Program podporuje komunikáciu pomocou UDP.	
 
@@ -142,7 +167,7 @@
 	\subsection{Rekurzívne a~nerekurzívne dotazy}
 	Umožňuje určiť, či sa~má vykonať rekurzívny (-r) alebo nerekurzívny dotaz. Rekurzívne dotazy žiadajú DNS server o~kompletnú odpoveď, zatiaľ čo~nerekurzívne vrátia len informácie, ktoré server už má.
 	\subsection{Reverzné dotazy}
-	Program umožňuje vykonávať reverzné dotazy (-x), vďaka čomu možno zistiť doménové meno priradené k~erčitej IP adrese.
+	Program umožňuje vykonávať reverzné dotazy (-x), vďaka čomu možno zistiť doménové meno priradené k~určitej IP adrese.
 	\subsection{Typy dotazov AAAA a~A}
 	Poskytuje možnosť vykonávať dotazy typu AAAA~(-6) pre~získanie IPv6 adries alebo typu A pre~IPv4 adresy, čo umožňuje flexibilitu v~získavaní sieťových informácií.
 	\subsection{Výstupy a~ich interpretácia}
@@ -154,14 +179,64 @@
 	\section{Riešenia problémov a chybové hlášky}
 	Problémové stavy sú v programe riešené pomocou chybových kódov a výpisov chýb na štandartný chybový výstup.
 	Príloha \ref{subsection:res_errCodes} obsahuje tabuľku chybových stavov a ich kódov.
+	Trieda, ktorá obsluhuje chyby, má nasledujúci kód:
+	\begin{lstlisting}[language=C++, caption={Kód triedy Error}]
+// Class will print error message and exit program 
+class Error {
+public:
+		
+	// Constructor with an optional variable parameter
+	Error(int errCode = ERR_UNDEFINED, std::string message = "undefined", std::string variable = "") {
+		// If variable is provided, replace %s in the message with variable
+		if (!variable.empty()) {
+			size_t pos = message.find("%s");
+			if (pos != std::string::npos) {
+				message.replace(pos, 2, variable);
+			}
+		}
 	
+		// Print the error message
+		std::cout << ANSI_RED;
+		std::cerr << "ERROR: ";
+		std::cout << ANSI_RESET;
+		std::cerr << message + "!\n";
+			
+		exit(errCode);
+	}
+};
+	\end{lstlisting}
+		
 	
 	%%%%% Architektúra programu %%%%%
 	\section{Architektúra programu}
 	Aplikácia je navrhnutá s viacerými modulmi, vrátane hlavného vstupného bodu, tried a knižníc, čo umožňuje modularitu a ľahšiu údržbu kódu. Diagram tried programu je v prílohe \ref{subsection:res_classDiagram}.
 
-	\subsection{Úvodný súbor}
+	\subsection{Hlavný súbor}
 	Súbor \texttt{main.cpp} slúži ako hlavný vstupný bod programu, kde sa inicializujú a spúšťajú triedy aplikácie.
+	\begin{lstlisting}[language=C++, caption={Kód hlavného súboru}]
+#include "libraries/main.hpp"
+
+/*
+ *  Main function
+ */
+int main(int argc, char *argv[]) {
+
+	DnsRequestSender *request = new DnsRequestSender;
+	DnsResponseReceiver *response = new DnsResponseReceiver;
+	int dnsResponseSize;
+
+	// Parse arguments, send packet and parse response
+	Arguments *arg = Arguments::parse_arguments(argc, argv);    	// Parse command-line arguments into an 'Arguments' object
+	char *dnsResponse = request->execute(arg, &dnsResponseSize);    // Send DNS request
+	response->parse(dnsResponse, &dnsResponseSize);                 // Parse DNS answer
+
+	// Free memory
+	delete[] dnsResponse;
+	return 0;
+	
+}
+
+	\end{lstlisting}
 	
 	\subsection{Triedy}
 	V rámci adresára \texttt{classes} sú implementované nasledujúce triedy:
@@ -189,14 +264,34 @@
 
 	%%%%% Testovanie programu %%%%%
 	\section{Testovanie programu}
-	Testovanie prebieha pomocou overovania rozdielov medzi očakávaným výstupom programu a výstupom programu po spustený testov. Testy je možné spustiť pomocou \texttt{make test}.
+	Testovanie prebieha pomocou overovania rozdielov medzi očakávaným výstupom programu a výstupom programu po spustený testov. Testy je možné spustiť pomocou \texttt{make test}.\newline
+	Príklad výstupu \texttt{make test} je možné vidieť v prílohe \ref{subsection:res_tests}
+	\begin{lstlisting}[language=BASH, caption={Ukážka kódu pre A testy}]
+for (( i=1; i<=$numOfTests_A; i++ )); do
+	read -r args < $root_dir/$sub_dir/$i.in
+		
+	# Using the variables in the paths
+	./dns $args > "$root_dir/$sub_dir/$i.programOut"
+	result=$(diff -b "$root_dir/$sub_dir/$i.expectedOut" "$root_dir/$sub_dir/$i.programOut")
+		
+	if [ -n "$result" ]; then
+		echo -e "[ \033[0;31mERR\033[0m ] TEST $i: Unxpected result"
+		echo "$result\n"
+		counterError=$((counterError + 1))
+	else
+		echo -e "[ \033[0;32mOK\033[0m ] TEST $i: Correct result"
+	fi
+done
+	\end{lstlisting}
+	
+
 	
 	%%%%% Rozšírenia %%%%%
 	\section{Rozšírenia}
 	\begin{itemize}
 		\item \textbf{Chybové kódy a detailný výpis chyby na STDERR}: Obsahuje jedinečný chybový kód pre každý typ chyby. Na štandartný chybový výstup vypíše opis chyby aj s ukážkou chybového kódu.
 		\item \textbf{\texttt{man dns}}: V \texttt{src/man/dns.1} je kód pre manuál tohto programu.
-		\item \textbf{Spracovanie viacerých typov RDATA}: Program dokážde okrem typov CNAME, A, AAAA spracovať aj NS, MD, MF, SOA, MB, MG, MR, NULL, WKS, PTR, HINFO, MINFO, MX, TXT a SRV.
+		\item \textbf{Spracovanie viacerých typov RDATA}: Program dokáže okrem typov CNAME, A, AAAA spracovať aj NS, MD, MF, SOA, MB, MG, MR, NULL, WKS, PTR, HINFO, MINFO, MX, TXT a SRV.
 		\item \textbf{Kontrola vstupných argumentov}: Konroluje, či vstupné argumenty majú správny formát (napr. či je argument, kde má byť IPv4 adresa naozaj IPv4 adresa, takisto aj pre IPv6,...)
 	\end{itemize}
 	
@@ -204,9 +299,9 @@
 
 	%%%%% Referencie %%%%%
 	\section{Referencie}
-	//todo: referencie
-	https://datatracker.ietf.org/doc/html/rfc1035
-	https://datatracker.ietf.org/doc/html/rfc3596
+	Mockapetris, P. (1987). "DOMAIN NAMES - IMPLEMENTATION AND SPECIFICATION". Network Working Group, Request for Comments: 1035, ISI, November 1987, https://datatracker.ietf.org/doc/html/rfc1035\newline\newline
+	Thomson, S., Huitema, C., Ksinant, V., Souissi, M. (2003). "DNS Extensions to Support IP Version 6". Network Working Group, Request for Comments: 3596, Cisco, Microsoft, 6WIND, AFNIC, October 2003,\newline https://datatracker.ietf.org/doc/html/rfc3596\newline\newline
+	Cloudflare. (n.d.). "What is DNS? | How DNS works". https://www.cloudflare.com/learning/dns/what-is-dns/ \newline\newline
 
 	%%%%% Prílohy %%%%%
 	\clearpage
@@ -268,6 +363,16 @@
 		\includegraphics[width=1 \linewidth]{res/classDiagram.png}
 
 		\caption{Diagram tried}
+	\end{figure}
+
+	\newpage
+	\subsection{Príklad výstupu \texttt{make test}}
+	\label{subsection:res_tests}
+	\begin{figure}[ht]
+		\centering
+		\includegraphics[width=1 \linewidth]{res/tests.png}
+
+		\caption{Výstup \texttt{make test}}
 	\end{figure}
 
 \end{document}
