@@ -2,12 +2,12 @@
 DNS je hierarchický a decentralizovaný systém, ktorý umožňuje užívateľom na internete nájsť webové stránky a iné služby prostredníctvom ľudom čitateľných názvov, tzv. doménových mien. DNS servery sú zodpovedné za prevod týchto názvov na IP adresy (alebo naopak), ktoré sú nevyhnutné pre nadviazanie sieťového spojenia.<br>
 Packet DNS sa skladá z hlavičky, otázky, odpovedi, autorizovanej odpovedi a zvyšných (doplňujúcich) dát.
 	
-### Using The Program
+### Použitie programu
 ```
 ./dns [-r] [-x] [-6] -s server [-p port] address
 ```
 
-### Rozšírnia
+### Rozšírenia
 * Chybové kódy a detailný výpis chyby na STDERR: Obsahuje jedinečný chybový kód pre každý typ chyby. Na štandartný chybový výstup vypíše opis chyby aj s ukážkou chybového kódu.
 * man dns: V src/man/dns.1 je kód pre manuál tohto programu.
 * Spracovanie viacerých typov RDATA: Program dokáže okrem typov CNAME, A, AAAA spracovať aj NS, MD, MF, SOA, MB, MG, MR, NULL, WKS, PTR, HINFO, MINFO, MX, TXT a SRV.
