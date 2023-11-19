@@ -15,6 +15,7 @@
 \usepackage{verbatim}
 \usepackage{enumitem}
 \usepackage{graphicx}
+\usepackage{tabularx}
 \usepackage[unicode]{hyperref}
 \hypersetup{
     colorlinks=true,
@@ -151,32 +152,54 @@
 
 	%%%%% Riešenia problémov a chybové hlášky %%%%%
 	\section{Riešenia problémov a chybové hlášky}
-	//todo: Bežné problémy a ich riešenia.
-	//todo: Vysvetlenie chybových hlášok a kroky k ich odstráneniu.
+	Problémové stavy sú v programe riešené pomocou chybových kódov a výpisov chýb na štandartný chybový výstup.
+	Príloha \ref{subsection:res_errCodes} obsahuje tabuľku chybových stavov a ich kódov.
+	
 	
 	%%%%% Architektúra programu %%%%%
 	\section{Architektúra programu}
-	//todo: Stručný popis kľúčových častí programu.
+	Aplikácia je navrhnutá s viacerými modulmi, vrátane hlavného vstupného bodu, tried a knižníc, čo umožňuje modularitu a ľahšiu údržbu kódu. Diagram tried programu je v prílohe \ref{subsection:res_classDiagram}.
+
+	\subsection{Úvodný súbor}
+	Súbor \texttt{main.cpp} slúži ako hlavný vstupný bod programu, kde sa inicializujú a spúšťajú triedy aplikácie.
+	
+	\subsection{Triedy}
+	V rámci adresára \texttt{classes} sú implementované nasledujúce triedy:
+	
+	\begin{itemize}
+		\item \textbf{Arguments}: Obsahuje implementáciu triedy \texttt{Arguments}, ktorá spracováva argumenty príkazového riadku.
+		\item \textbf{DNS}:
+		\begin{itemize}
+			\item \texttt{DnsRequestSender}: Táto trieda je zodpovedná za odosielanie DNS požiadaviek a čaká na príchod odpovede.
+			\item \texttt{DnsResponseReceiver}: Trieda na spracovanie DNS odpovedí.
+		\end{itemize}
+		\item \textbf{Error}: Trieda \texttt{Error} a jej hlavičkový súbor \texttt{Error.hpp} sa zaoberajú spracovaním a reportovaním chýb v programe.
+	\end{itemize}
+	
+	\subsection{Knižnice}
+	\begin{itemize}
+		\item \textbf{$ansi\_colors.hpp$}: Obsahuje farby, ktoré sú použité na štandartnom výstupe.
+		\item \textbf{$dns\_constants.hpp$}: DNS konštanty potrebné pre chod programu.
+		\item \textbf{$dns\_structures.hpp$}: Obsahuje štruktúru \texttt{dnsHeaders},  \texttt{DnsQuestions}, \texttt{DnsAnswers} a \texttt{SoaHeaders}.
+		\item \textbf{$dns\_constants.hpp$}: Importuje všetky kódy tried, knižníc a hlavičkových súborov.
+	\end{itemize}
+	
+	\subsection{Manuál}
+	V adresári \texttt{man} sa nachádza súbor \texttt{dns.1}, ktorý obsahuje manuál pre tento program.
 
 	%%%%% Testovanie programu %%%%%
 	\section{Testovanie programu}
-	//todo: Postupy a nástroje pre testovanie aplikácie.
-	//todo: Príklady testov a ich význam.
-	// testy su ok, a treba cakat kvoli zmene TTL.....Obsah databáze DNS se z principů mění a může vypadat z různých míst různě. Např. doporučuji se serveru kazi.fit.vutbr.cz ptát ze sítě FIT. Do jiných sítí mohou být odpovědi jiné. Ukázkové záznamy jsou mimo mou kontrolu a mohou se nepředvídatelně měnit, v průběhu řešení projektu mohou být zrušená, dočasně nedostupná, nově přesměrovaná jinam apod.
+	Testovanie prebieha pomocou overovania rozdielov medzi očakávaným výstupom programu a výstupom programu po spustený testov. Testy je možné spustiť pomocou \texttt{make test}.
 	
-	Referenční prostředí pro překlad a testování
-
-	Program by měl být přenositelný. Referenční prostředí pro překlad budou servery eva.fit.vutbr.cz a merlin.fit.vutbr.cz (program musí být přeložitelný a funkční na obou systémech). Vlastní testování může probíhat na jiném počítači s nainstalovaným OS GNU/Linux, či FreeBSD, včetně jiných architektur než Intel/AMD, jiných distribucí, jiných verzí knihoven apod. Pokud vyžadujete minimální verzi knihovny (dostupné na serveru merlin a eva), jasně tuto skutečnost označte v dokumentaci a README.
-
-	%error testy testuju, ci na vystupe je chybovy vystup "[31m[0m"
-
 	%%%%% Rozšírenia %%%%%
 	\section{Rozšírenia}
-	//todo: Aké rozšírenia má program? (podpora viac vecí, chybové kódy, chybové hlášky,...)
-	// Errcodes
-	// Zadání nespecifikuje, které typy RDATA bychom měli být schopni zpracovávat. Existuje více než 16 typů, ale zadání se zmiňuje pouze o CNAME, A, AAAA. Měl by je program umět zpracovat všechny, nebo jen tyto tři?:::::	Tato funkcionalita je vyžadovaná v zadání. Zpracování dalších, vámi uvedených i typů záznamů z jiných RFC, lze vnímat jako funkcionalitu základní zadání rozšiřující. Pakliže se rozhodnete implementovat funkcionalitu nad rámec zadání, jasně toto rozšíření označte v souboru README a dokumentaci. Vámi implementované rozšíření řádně dokumenujte. Vaše rozhodnutí ve fázi návrhu a implementace řádně dokumentujte a vysvětlete v dokumentaci.
-	je tam kontrola na format vstupu argumentov
-	// man stranka v src/man/dns.1
+	\begin{itemize}
+		\item \textbf{Chybové kódy a detailný výpis chyby na STDERR}: Obsahuje jedinečný chybový kód pre každý typ chyby. Na štandartný chybový výstup vypíše opis chyby aj s ukážkou chybového kódu.
+		\item \textbf{\texttt{man dns}}: V \texttt{src/man/dns.1} je kód pre manuál tohto programu.
+		\item \textbf{Spracovanie viacerých typov RDATA}: Program dokážde okrem typov CNAME, A, AAAA spracovať aj NS, MD, MF, SOA, MB, MG, MR, NULL, WKS, PTR, HINFO, MINFO, MX, TXT a SRV.
+		\item \textbf{Kontrola vstupných argumentov}: Konroluje, či vstupné argumenty majú správny formát (napr. či je argument, kde má byť IPv4 adresa naozaj IPv4 adresa, takisto aj pre IPv6,...)
+	\end{itemize}
+	
 
 
 	%%%%% Referencie %%%%%
@@ -191,12 +214,60 @@
 	
 	\subsection{Výpis \texttt{./dns -h} na~štandartnom výstupe}
 	\label{subsection:res_A}
-
 	\begin{figure}[ht]
 		\centering
 		\includegraphics[width=1 \linewidth]{res/A.png}
 
 		\caption{Príklad výstupu \texttt{./dns -h} na~štandartnom výstupe. Príklad bol realizovaný na~serveri \mbox{merlin.fit.vutbr.cz}}
+	\end{figure}
+
+	\newpage
+	\subsection{Tabuľka chybových kódov}
+	\label{subsection:res_errCodes}
+	\begin{table}[h]
+		\centering
+		\begin{tabularx}{\textwidth}{|X|l|}
+		\hline
+		\textbf{Názov chyby}                    & \textbf{Chybový kód} \\ \hline
+		ERR\_NONE                              & 0                   \\ \hline
+		\multicolumn{2}{|X|}{\textit{Build Errors}}                    \\ \hline
+		ERR\_BUILD                             & 1                   \\ \hline
+		\multicolumn{2}{|X|}{\textit{Argument Errors}}                 \\ \hline
+		ERR\_ARG\_INVALID\_ARGUMENT            & 10                  \\ \hline
+		ERR\_ARG\_UNUSUAL\_PARAMETER           & 11                  \\ \hline
+		ERR\_ARG\_MISSING\_SERVER              & 12                  \\ \hline
+		ERR\_ARG\_CAN\_NOT\_BE\_X\_AND\_IPV6   & 13                  \\ \hline
+		ERR\_ARG\_IS\_NOT\_IPV4\_ADDRESS       & 14                  \\ \hline
+		ERR\_ARG\_IS\_NOT\_IPV6\_ADDRESS       & 15                  \\ \hline
+		ERR\_ARG\_IS\_NOT\_WEBSITE             & 16                  \\ \hline
+		\multicolumn{2}{|X|}{\textit{DNS Request Sender Errors}}       \\ \hline
+		ERR\_DNS\_S\_UNABLE\_LOAD\_SERVER      & 30                  \\ \hline
+		ERR\_DNS\_S\_SOCKET\_WAS\_NOT\_CREATED & 31                  \\ \hline
+		ERR\_DNS\_S\_DNS\_CONNECTION\_FAILED   & 32                  \\ \hline
+		ERR\_DNS\_S\_UNABLE\_LOAD\_DNS\_SERVER & 33                  \\ \hline
+		ERR\_DNS\_S\_IP\_ADDRESS\_NOT\_FOUND   & 34                  \\ \hline
+		ERR\_DNS\_S\_RESPONSE\_FAILED          & 35                  \\ \hline
+		\multicolumn{2}{|X|}{\textit{DNS Response Receiver Errors}}    \\ \hline
+		ERR\_DNS\_T\_UNDEFINED                 & 70                  \\ \hline
+		\multicolumn{2}{|X|}{\textit{Tests Errors}}                    \\ \hline
+		ERR\_TESTS\_UNDEFINED                  & 80                  \\ \hline
+		\multicolumn{2}{|X|}{\textit{Documentation Errors}}            \\ \hline
+		ERR\_DOC\_UNDEFINED                    & 90                  \\ \hline
+		\multicolumn{2}{|X|}{\textit{Other}}                           \\ \hline
+		ERR\_UNDEFINED                         & 100                 \\ \hline
+		\end{tabularx}
+		\caption{Zoznam chybových stavov a ich chybových kódov}
+		\label{tab:errors}
+	\end{table}
+		
+	\newpage
+	\subsection{Diagram tried programu}
+	\label{subsection:res_classDiagram}
+	\begin{figure}[ht]
+		\centering
+		\includegraphics[width=1 \linewidth]{res/classDiagram.png}
+
+		\caption{Diagram tried}
 	\end{figure}
 
 \end{document}
